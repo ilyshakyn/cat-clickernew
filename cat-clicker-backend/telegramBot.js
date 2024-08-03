@@ -3,8 +3,8 @@ const TelegramBot = require('node-telegram-bot-api');
 const axios = require('axios');
 const path = require('path');
 
-// Здесь нужно вставить ваш токен
-const token = 'YOUR_TELEGRAM_BOT_TOKEN';
+// Вставьте ваш токен Telegram Bot
+const token = '7134326088:AAFLaA9o8Hmouvch_Ob6bmJklEd4HCHJC-4';
 
 const app = express();
 const bot = new TelegramBot(token, { polling: true });
@@ -14,7 +14,7 @@ app.use(express.static(path.join(__dirname, 'frontend/build')));
 
 bot.onText(/\/start/, (msg) => {
   console.log('/start command received');
-  bot.sendMessage(msg.chat.id, "Welcome to Cat Tap Clicker!");
+  bot.sendMessage(msg.chat.id, "Welcome to Cat Tap Clicker! Type /app to play the game.");
 });
 
 bot.onText(/\/register (.+)/, async (msg, match) => {
@@ -55,7 +55,13 @@ bot.onText(/\/app/, (msg) => {
   const appUrl = 'https://cat-clickernew-jmaq.vercel.app/'; // Замените на ваш URL
 
   console.log('/app command received');
-  bot.sendMessage(chatId, ` перейдите в это веб приложение: ${appUrl}`);
+  bot.sendMessage(chatId, 'Click to play the game!', {
+    reply_markup: {
+      inline_keyboard: [
+        [{ text: "Play Game", web_app: { url: appUrl } }]
+      ]
+    }
+  });
 });
 
 // The "catchall" handler: for any request that doesn't match one above, send back React's index.html file.
