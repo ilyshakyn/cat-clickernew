@@ -1,10 +1,16 @@
+const express = require('express');
 const TelegramBot = require('node-telegram-bot-api');
 const axios = require('axios');
+const path = require('path');
 
 // Здесь нужно вставить ваш токен
-const token = '7134326088:AAFLaA9o8Hmouvch_Ob6bmJklEd4HCHJC-4';
+const token = 'YOUR_TELEGRAM_BOT_TOKEN';
 
+const app = express();
 const bot = new TelegramBot(token, { polling: true });
+
+// Serve static files from the React app
+app.use(express.static(path.join(__dirname, 'frontend/build')));
 
 bot.onText(/\/start/, (msg) => {
   console.log('/start command received');
@@ -46,12 +52,19 @@ bot.onText(/\/user (.+)/, async (msg, match) => {
 // Обработчик команды /app
 bot.onText(/\/app/, (msg) => {
   const chatId = msg.chat.id;
-  const appUrl = 'https://www.youtube.com/watch?v=_S7WEVLbQ-Y'; // Замените на ваш URL
+  const appUrl = 'https://cat-clickernew-jmaq.vercel.app/'; // Замените на ваш URL
 
   console.log('/app command received');
   bot.sendMessage(chatId, ` перейдите в это веб приложение: ${appUrl}`);
 });
 
-module.exports = () => {
+// The "catchall" handler: for any request that doesn't match one above, send back React's index.html file.
+app.get('*', (req, res) => {
+  res.sendFile(path.join(__dirname, 'frontend/build/index.html'));
+});
+
+const port = process.env.PORT || 5000;
+app.listen(port, () => {
+  console.log(`Server is running on port ${port}`);
   console.log('Telegram bot is running...');
-};
+});
